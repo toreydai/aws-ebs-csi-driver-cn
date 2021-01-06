@@ -19,6 +19,8 @@ git clone https://github.com/toreydai/aws-ebs-csi-driver-cn.git
 
 ```bash
 
+AWS_REGION=cn-northwest-1
+
 aws iam create-policy \
     --policy-name Amazon_EBS_CSI_Driver \
     --policy-document file://./resource/ebs-csi-iam-policy.json \
