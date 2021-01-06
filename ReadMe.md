@@ -100,4 +100,3 @@ kubectl exec -it app cat /data/out.txt
 
 5 删除示例程序
 kubectl delete -f specs/
-```
