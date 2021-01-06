@@ -1,11 +1,20 @@
-# 步骤5 配置使用EBS CSI
+# 免责说明
+<br> 建议测试过程中使用此文档，生产环境使用请自行考虑评估。
+<br> 当您对方案需要进一步的沟通和反馈后，可以联系 taodai@nwcdcloud.cn 获得更进一步的支持。
+<br> 欢迎联系参与方案共建和提交方案需求，也欢迎在 github 项目issue中留言反馈bugs。
 
-* [官方ebs-csi指导](https://docs.aws.amazon.com/zh_cn/eks/latest/userguide/ebs-csi.html)
-* [官方eks-persistent-storage支持手册](https://aws.amazon.com/premiumsupport/knowledge-center/eks-persistent-storage/)
+# 配置使用EBS CSI
 
-5.1 创建所需要的IAM policy , EKS OIDC provider, service account
+1 准备工作
+> 将本项目Clone到本地
+```
+git clone https://github.com/toreydai/aws-ebs-csi-driver-cn.git
+```
 
-> 5.1.1 创建所需要的IAM policy
+
+2 创建所需要的IAM policy , EKS OIDC provider, service account
+
+> 2.1 创建所需要的IAM policy
 [https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json](https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json)
 
 ```bash
@@ -19,7 +28,7 @@ aws iam create-policy \
 POLICY_NAME=$(aws iam list-policies --query 'Policies[?PolicyName==`Amazon_EBS_CSI_Driver`].Arn' --output text --region ${AWS_REGION})
 ```
 
-> 5.1.2 获取EKS工作节点的IAM role
+> 2.2 获取EKS工作节点的IAM role
 
 ```bash
 # 注意这一步如果是多个nodegroup就会有多个role
@@ -34,7 +43,7 @@ aws iam attach-role-policy --policy-arn ${POLICY_NAME} \
 sh aws-ebs-csi-driver/updaterole.sh ${POLICY_NAME}
 ```
 
-> 5.1.3 部署EBS CSI 驱动到eks 集群
+> 2.3 部署EBS CSI 驱动到eks 集群
 
 ```bash
 #git clone https://github.com/kubernetes-sigs/aws-ebs-csi-driver.git
@@ -61,7 +70,7 @@ kube-proxy-nfj9c                          1/1     Running   0          25d
 metrics-server-7578984995-q28vn           1/1     Running   0          25d
 ```
 
-5.2 部署动态卷实例应用
+3 部署动态卷实例应用
 
 ```bash
 cd resource/examples/kubernetes/dynamic-provisioning/
@@ -85,7 +94,10 @@ kubectl exec -it app cat /data/out.txt
 # Wed Jan 6 03:05:16 UTC 2021
 # Wed Jan 6 03:05:21 UTC 2021
 # Wed Jan 6 03:05:26 UTC 2021
+```
+4 在EC2 Console中查看PV卷
+![avatar](https://github.com/toreydai/aws-ebs-csi-driver-cn/blob/main/pv-ebs-gp3.png)
 
-#删除示例程序
+5 删除示例程序
 kubectl delete -f specs/
 ```
